@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Poya-Faraji/plater-express-backend/issues"
   },
-  "homepage": "https://github.com/Poya-Faraji/plater-express-backend#readme"
+  "homepage": "https://github.com/Poya-Faraji/plater-express-backend#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }

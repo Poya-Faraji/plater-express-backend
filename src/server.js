@@ -1,5 +1,6 @@
 import express from "express";
-
+import authRouter from "./routes/authRouter.js";
+import cors from 'cors'
 const app = express();
 
 const port = process.env.PORT || 8080;
@@ -8,6 +9,9 @@ const port = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-app.listen(port, (req, res) => {
+// Routes
+app.use("/auth", authRouter);
+
+app.listen(port, () => {
   console.log(`Application is listening on port ${port}`);
 });

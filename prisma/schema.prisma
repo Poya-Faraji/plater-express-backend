@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username      String    @unique @db.VarChar(50)
+  passwordHash  String    @map("password_hash")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  fname         String    @db.VarChar(100)
+  lname         String    @db.VarChar(100)
+  codeMeli      String    @unique @map("code_meli") @db.VarChar(20)
+  address       String?
+  phoneNumber   String?   @map("phone_number") @db.VarChar(11)
+  postalCode    String?   @map("postal_code") @db.VarChar(20)
+  userType      UserType  @map("user_type")
+  issuedTickets Ticket[]  @relation("TicketOfficer")
+  ownedVehicles Vehicle[] @relation("VehicleOwner")
+
+  @@map("users")
+}
+
+model Vehicle {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  first2digits String   @db.VarChar(2)
+  letter       String   @db.VarChar(5)
+  last3digits  String   @db.VarChar(3)
+  citycode     String   @db.VarChar(3)
+  model        String?  @db.VarChar(50)
+  color        String?  @db.VarChar(30)
+  year         Int?
+  ownerId      String   @map("owner_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  tickets      Ticket[]
+  owner        User     @relation("VehicleOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@unique([first2digits, letter, last3digits, citycode], name: "unique_plate_parts")
+  @@map("vehicles")
+}
+
+model Ticket {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicleId String       @map("vehicle_id") @db.Uuid
+  officerId String       @map("officer_id") @db.Uuid
+  violation String
+  issuedAt  DateTime     @default(now()) @map("issued_at") @db.Timestamptz(6)
+  status    TicketStatus @default(UNPAID)
+  amount    Decimal      @db.Decimal(10, 2)
+  payments  Payment[]
+  officer   User         @relation("TicketOfficer", fields: [officerId], references: [id], onDelete: SetNull)
+  vehicle   Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("tickets")
+}
+
+model Payment {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId      String   @map("ticket_id") @db.Uuid
+  paidAt        DateTime @default(now()) @map("paid_at") @db.Timestamptz(6)
+  amount        Decimal  @db.Decimal(10, 2)
+  method        String?  @db.VarChar(30)
+  transactionId String?  @unique @map("transaction_id") @db.VarChar(100)
+  ticket        Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum UserType {
+  OFFICER
+  OWNER
+}
+
+enum TicketStatus {
+  UNPAID
+  PAID
+  CANCELLED
+}

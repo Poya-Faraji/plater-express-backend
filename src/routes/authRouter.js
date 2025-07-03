@@ -16,4 +16,7 @@ router.post('/login', login);
 router.get("/verify-token", verifyToken, jwtController)
 
 
+//
+router.get("/verify-token", verifyToken, jwtController)
+
 export default router;

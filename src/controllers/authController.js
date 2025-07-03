@@ -1,6 +1,6 @@
 import prisma from "../../prismaClient.js";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/jwtHandler.js";
+import { generateToken  } from "../utils/jwtHandler.js";
 
 // User registration
 export const register = async (req, res) => {
@@ -39,7 +39,9 @@ export const register = async (req, res) => {
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ error: "Password must be at least 6 characters long" });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
     }
 
     // Check if user already exists

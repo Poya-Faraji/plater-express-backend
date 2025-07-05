@@ -59,9 +59,8 @@ export const vehicleController = async (req, res) => {
     });
 
     if (existingVehicle) {
-      return res
-        .status(409)
-        .json({ error: "Vehicle plate already exsists in database." });
+      return res.status(409).json({ error: "Vehicle plate already exsists in database." });
+      
     }
 
     if (!uuidValidate(owner_id)) {

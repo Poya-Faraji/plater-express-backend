@@ -2,6 +2,7 @@ import express from "express";
 import authRouter from "./routes/authRouter.js";
 import userRouter from "./routes/userRouter.js";
 import vehicleRouter from "./routes/vehicleRouter.js";
+import ticketRouter from "./routes/ticketRouter.js";
 
 import cors from "cors";
 const app = express();
@@ -20,7 +21,7 @@ app.use("/api", userRouter);
 app.use("/api", vehicleRouter);
 
 
-// api.use("/api, ticketRouter")
+app.use("/api", ticketRouter)
 
 app.listen(port, () => {
   console.log(`Application is listening on port ${port}`);

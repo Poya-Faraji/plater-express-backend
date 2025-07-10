@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { verifyToken } from '../middleware/verifyToken.js';
+import { ticketController } from '../controllers/ticketController.js';
 
 
 
@@ -8,7 +9,7 @@ const router = express.Router();
 
 
 
-router.get("/name-here!!", verifyToken, asdasd)
+router.post("/create-ticket", verifyToken, ticketController)
 
 
 

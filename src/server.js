@@ -20,8 +20,9 @@ app.use("/api", userRouter);
 
 app.use("/api", vehicleRouter);
 
-
 app.use("/api", ticketRouter)
+
+
 
 app.listen(port, () => {
   console.log(`Application is listening on port ${port}`);

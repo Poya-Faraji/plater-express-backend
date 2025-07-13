@@ -61,3 +61,62 @@ export const ticketController = async (req, res) => {
     await prisma.$disconnect();
   }
 };
+
+export const getTicketsByOfficer = async (req, res) => {
+  const { officer_id } = req.params;
+
+  if (!uuidValidate(officer_id)) {
+    return res.status(400).json({
+      error: "Invalid officer ID format - must be a valid UUID",
+    });
+  }
+
+  try {
+    const tickets = await prisma.ticket.findMany({
+      where: {
+        officerId: officer_id,
+      },
+      include: {
+        vehicle: {
+          select: {
+            model: true,
+            first2digits: true,
+            letter: true,
+            last3digits: true,
+            citycode: true,
+          },
+        },
+      },
+      orderBy: {
+        issuedAt: "desc",
+      },
+    });
+
+    if (tickets.length === 0) {
+      return res.status(404).json({
+        message: "No tickets found for this officer",
+        officer_id,
+      });
+    }
+
+    // Format the response with license plate
+    const formattedTickets = tickets.map((ticket) => ({
+      ...ticket,
+      vehicle: {
+        ...ticket.vehicle,
+        licensePlate: `${ticket.vehicle.first2digits}${ticket.vehicle.letter}${ticket.vehicle.last3digits}${ticket.vehicle.citycode}`,
+      },
+    }));
+
+    res.json({
+      officer_id,
+      count: formattedTickets.length,
+      tickets: formattedTickets,
+    });
+  } catch (error) {
+    console.error("Prisma error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};

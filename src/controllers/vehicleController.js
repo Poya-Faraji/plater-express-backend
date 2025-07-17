@@ -187,7 +187,7 @@ export const deleteVehicle = async (req, res) => {
     // Validate UUID format
     if (!uuidValidate(id)) {
       return res.status(400).json({
-        error: "Invalid vehicle ID format - must be a valid UUID",
+        error: "قالب شناسه وسیله نقلیه نامعتبر است - باید یک UUID معتبر باشد",
       });
     }
 
@@ -209,7 +209,7 @@ export const deleteVehicle = async (req, res) => {
     if (vehicle.tickets.length > 0) {
       return res
         .status(403)
-        .json({ error: "Cannot delete vehicle with unresolved tickets" });
+        .json({ error: "نمی‌توان وسیله نقلیه‌ای را که جریمه‌هایش حل نشده است، حذف کرد" });
     }
     await prisma.$transaction(async (tx) => {
       await tx.payment.deleteMany({
@@ -231,7 +231,7 @@ export const deleteVehicle = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Vehicle deleted successfully",
+      message: "خودرو با موفقیت حذف شد",
     });
   } catch (error) {
     console.error("Error deleting vehicle details:", error);

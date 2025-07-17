@@ -4,32 +4,33 @@ import { validate as uuidValidate } from "uuid";
 export const ticketController = async (req, res) => {
   try {
     const { vehicle_id, officer_id, violation, amount } = req.body;
+    
 
     // Validate required fields
     if (!vehicle_id || !officer_id || !violation || !amount) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: "فیلدهای الزامی وجود ندارد" });
     }
 
     if (!uuidValidate(vehicle_id)) {
       return res.status(400).json({
-        error: "Invalid vehicle ID format - must be a valid UUID",
+        error: "قالب شناسه وسیله نقلیه نامعتبر است - باید یک UUID معتبر باشد",
       });
     }
 
     if (!uuidValidate(officer_id)) {
       return res.status(400).json({
-        error: "Invalid officer ID format - must be a valid UUID",
+        error: "قالب شناسه افسر نامعتبر است - باید یک UUID معتبر باشد",
       });
     }
 
     // Validate amount is a valid number
     if (isNaN(amount)) {
       return res.status(400).json({
-        error: "Invalid amount - must be a number",
+        error: "مبلغ نامعتبر است - باید عدد باشد",
       });
     }
 
-    // Convert amount to Decimal type
+  
     const amountValue = parseFloat(amount);
 
     const newTicket = await prisma.ticket.create({
@@ -41,18 +42,17 @@ export const ticketController = async (req, res) => {
       },
     });
 
-    // Return successful response
+  
     res.status(201).json({
-      message: "Ticket created successfully",
+      message: "جریمه با موفقیت ایجاد شد",
       ticketId: newTicket.id,
     });
   } catch (error) {
     console.error("Ticket creation error:", error);
 
-    // Handle specific Prisma errors
     if (error.code === "P2003") {
       return res.status(400).json({
-        error: "Invalid vehicle or officer ID - reference not found",
+        error: "کارت شناسایی خودرو یا افسر نامعتبر است - مدرک شناسایی پیدا نشد",
       });
     }
 
@@ -67,7 +67,7 @@ export const getTicketsByOfficer = async (req, res) => {
 
   if (!uuidValidate(officer_id)) {
     return res.status(400).json({
-      error: "Invalid officer ID format - must be a valid UUID",
+      error: "قالب شناسه افسر نامعتبر است - باید یک UUID معتبر باشد",
     });
   }
 
@@ -126,7 +126,7 @@ export const getTicketByID = async (req, res) => {
 
   if (!uuidValidate(ticket_id)) {
     return res.status(400).json({
-      error: "Invalid ticket ID format - must be a valid UUID",
+      error: "قالب شناسه بلیط نامعتبر است - باید یک UUID معتبر باشد",
     });
   }
 

@@ -27,21 +27,21 @@ export const register = async (req, res) => {
       !userType ||
       !phoneNumber
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: "فیلدهای الزامی وجود ندارد" });
     }
 
     if (codeMeli.length !== 10) {
-      return res.status(400).json({ error: "National ID must be 10 digits" });
+      return res.status(400).json({ error: "کد ملی باید ۱۰ رقمی باشد" });
     }
 
     if (phoneNumber.length !== 11) {
-      return res.status(400).json({ error: "Phone number must be 11 digits" });
+      return res.status(400).json({ error: "شماره تلفن باید 11 رقم باشد" });
     }
 
     if (password.length < 6) {
       return res
         .status(400)
-        .json({ error: "Password must be at least 6 characters long" });
+        .json({ error: "رمز عبور باید حداقل 6 کاراکتر داشته باشد" });
     }
 
     // Check if user already exists
@@ -54,7 +54,7 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res
         .status(409)
-        .json({ error: "Username or national ID(code meli) already exists" });
+        .json({ error: "نام کاربری یا شناسه ملی (کد ملی) از قبل وجود دارد" });
     }
 
     // Hash password

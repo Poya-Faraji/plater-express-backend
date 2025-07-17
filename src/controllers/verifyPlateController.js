@@ -6,12 +6,12 @@ export const getVehicleIdByPlate = async (req, res) => {
 
     if (!first2digits || !letter || !last3digits || !citycode) {
       return res.status(400).json({
-        error: "All plate components are required: first2digits, letter, last3digits, citycode"
+        error: "تمام اجزای پلاک الزامی است: دو رقم اول، حرف اول، سه رقم آخر، کد شهر"
       });
     }
 
     const vehicle = await prisma.vehicle.findUnique({
-      where: {
+      where: {  
         unique_plate_parts: {
           first2digits,
           letter,
@@ -25,12 +25,12 @@ export const getVehicleIdByPlate = async (req, res) => {
     });
 
     if (!vehicle) {
-      return res.status(404).json({ error: "Vehicle not found" });
+      return res.status(404).json({ error: "خودرو مورد نظر ثبت نشده است" });
     }
 
     res.json({ vehicleId: vehicle.id });
   } catch (error) {
-    console.error("Error fetching vehicle by plate:", error);
+    console.error("خطا در دریافت خودرو بر اساس پلاک:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

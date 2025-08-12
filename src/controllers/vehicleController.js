@@ -25,27 +25,27 @@ export const vehicleController = async (req, res) => {
       !year ||
       !owner_id
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: "فیلد های اجباری خالی است." });
     }
 
     if (first2digits.length !== 2) {
       return res
         .status(400)
-        .json({ error: "First2digits must have length of 2." });
+        .json({ error: "دو رقم اول باید طول ۲ را داشته باشند" });
     }
 
     if (last3digits.length !== 3) {
       return res
         .status(400)
-        .json({ error: "last3digits must have length of3." });
+        .json({ error: "سه رقم آخر باید طول ۳ رقم را داشته باشند" });
     }
 
     if (letter.length !== 1) {
-      return res.status(400).json({ error: "Letter must be 1 character." });
+      return res.status(400).json({ error: "حرف پلاک باید به طول یک باشد" });
     }
 
     if (citycode.length !== 2) {
-      return res.status(400).json({ error: "City code must be 2 digits." });
+      return res.status(400).json({ error: "کد شهر باید ۲ رقمی باشد" });
     }
 
     // Check if vehcile already exists
@@ -61,7 +61,7 @@ export const vehicleController = async (req, res) => {
     if (existingVehicle) {
       return res
         .status(409)
-        .json({ error: "Vehicle plate already exsists in database." });
+        .json({ error: "پلاک در حال حاضر در پایگاه داده موجود است" });
     }
 
     if (!uuidValidate(owner_id)) {
@@ -79,7 +79,7 @@ export const vehicleController = async (req, res) => {
     if (!existingUser) {
       return res
         .status(404)
-        .json({ error: "Vehicle must be signed to existing user." });
+        .json({ error: "وسیله نقلیه باید به کاربر موجود اضافه شود." });
     }
 
     // Create Vehicle
@@ -152,7 +152,7 @@ export const getVehicleDetails = async (req, res) => {
     });
 
     if (!vehicle) {
-      return res.status(404).json({ error: "Vehicle not found" });
+      return res.status(404).json({ error: "وسیله نقلیه مورد نظر یافت نشد." });
     }
 
     // Calculate unpaid tickets status
@@ -203,7 +203,7 @@ export const deleteVehicle = async (req, res) => {
     });
 
     if (!vehicle) {
-      return res.status(404).json({ error: "Vehicle not found" });
+      return res.status(404).json({ error: "وسیله مورد نظر یافت نشد." });
     }
 
     if (vehicle.tickets.length > 0) {

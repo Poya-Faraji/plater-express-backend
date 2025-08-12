@@ -94,7 +94,7 @@ export const getTicketsByOfficer = async (req, res) => {
 
     if (tickets.length === 0) {
       return res.status(404).json({
-        message: "No tickets found for this officer",
+        message: "هیچ جزیمه ای برای افسر مورد نظر یافت نشد.",
         officer_id,
       });
     }
@@ -170,7 +170,7 @@ export const getTicketByID = async (req, res) => {
     });
 
     if (!ticket) {
-      return res.status(404).json({ error: "Ticket not found" });
+      return res.status(404).json({ error: "جریمه یافت نشد." });
     }
 
     const formattedTicket = {

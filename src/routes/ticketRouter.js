@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { verifyToken } from '../middleware/verifyToken.js';
-import { cancelTicket, getTicketByID, getTicketsByOfficer, ticketController } from '../controllers/ticketController.js';
+import { cancelTicket, getTicketByID, getTicketsByOfficer, payTicket, ticketController } from '../controllers/ticketController.js';
 
 
 
@@ -20,5 +20,7 @@ router.get('/ticket/:ticket_id', verifyToken, getTicketByID)
 
 router.put('/ticket/:ticket_id/cancel', verifyToken, cancelTicket)
 
+
+router.put('/ticket/:ticket_id/pay', verifyToken, payTicket)
 
 export default router;

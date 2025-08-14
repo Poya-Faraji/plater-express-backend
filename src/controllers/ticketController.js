@@ -263,3 +263,63 @@ const getStatusText = (status) => {
       return status;
   }
 };
+
+
+export const payTicket = async (req, res) => {
+  const { ticket_id } = req.params;
+
+  if (!uuidValidate(ticket_id)) {
+    return res.status(400).json({
+      error: "فرمت شناسه قبض نامعتبر است - باید UUID معتبر باشد",
+    });
+  }
+
+  try {
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: ticket_id },
+      select: { 
+        status: true,
+        amount: true
+      },
+    });
+
+    if (!ticket) {
+      return res.status(404).json({ error: "قبض مورد نظر یافت نشد" });
+    }
+
+    if (ticket.status !== "UNPAID") {
+      return res.status(400).json({
+        error: `قبض با وضعیت ${getStatusText(ticket.status)} قابل پرداخت نیست`,
+        currentStatus: ticket.status,
+        allowedStatus: "UNPAID",
+      });
+    }
+
+    // Start transaction
+    const [updatedTicket, payment] = await prisma.$transaction([
+      prisma.ticket.update({
+        where: { id: ticket_id },
+        data: { status: "PAID" },
+      }),
+      prisma.payment.create({
+        data: {
+          ticketId: ticket_id,
+          amount: ticket.amount,
+          method: "آنلاین",
+          paidAt: new Date(),
+        },
+      })
+    ]);
+
+    return res.status(200).json({
+      message: "پرداخت با موفقیت انجام شد",
+      newStatus: updatedTicket.status,
+      paymentId: payment.id,
+      amount: payment.amount.toNumber(),
+      paidAt: payment.paidAt,
+    });
+  } catch (error) {
+    console.error("خطا در پرداخت قبض:", error);
+    return res.status(500).json({ error: "خطای سرور داخلی" });
+  }
+};
